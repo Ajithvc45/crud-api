@@ -49,10 +49,32 @@ app.delete("/task/:id", async (req, res) => {
   }
 });
 
+// search
+app.get("/tasks/search", async (req, res) => {
+  const searchQuery = req.query.q;
+  try {
+    const tasks = await Task.find({
+      task: { $regex: new RegExp(searchQuery, "i") }, // 'i' for case-insensitive search
+    });
+    if (tasks.length === 0) {
+      return res.json({ message: "Search result not found" });
+    }
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // signin
 app.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
+    // Check if the email is already registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already in use" });
+    }
+
     const hashPassword = await bcrypt.hash(password, 10); // hash the password
     const user = await User.create({ email, password: hashPassword }); // Create a new user with the hashed password
     res.status(201).json(user);
