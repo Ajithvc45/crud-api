@@ -16,11 +16,13 @@ app.use((req, res, next) => {
 // routes
 const authRoutes = require("./routes/auth");
 const todo = require("./routes/todo");
+const file = require("./routes/multer");
 
 //environment variable
 app.use(cors());
 app.use("/api", authRoutes);
 app.use("/api", todo);
+app.use("/api", file);
 
 mongoose
   .connect(
