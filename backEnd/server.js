@@ -1,9 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-// const Task = require("./models/todoModel");
-// const User = require("./models/userModel");
+const path = require("path");
 const app = express();
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
@@ -24,6 +24,15 @@ app.use("/api", authRoutes);
 app.use("/api", todo);
 app.use("/api", file);
 
+// ejs 
+app.set("view engine", "ejs");
+app.set("views", path.resolve("./views"));
+
+app.get("/ejs/file", (req, res) => {
+  return res.render("file");
+});
+
+// db connection
 mongoose
   .connect(
     "mongodb+srv://ajithvc45:Ajithvc45@cluster0.sq4kclp.mongodb.net/todo?retryWrites=true&w=majority"
